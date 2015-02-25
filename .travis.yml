@@ -1,0 +1,14 @@
+language: python
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -y graphviz
+install:
+  - pip install tox
+script:
+    - tox
+env:
+  - TOXENV=py26
+  - TOXENV=py27
+  - TOXENV=py33
+  - TOXENV=py34
+  - TOXENV=pep8
