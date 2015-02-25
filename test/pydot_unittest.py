@@ -16,7 +16,7 @@ except ImportError:
 import subprocess
 import sys
 
-import pydot
+import pydot_ng as pydot
 import unittest
 
 

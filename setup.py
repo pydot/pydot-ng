@@ -1,24 +1,20 @@
 #!/usr/bin/env python
+from setuptools import setup
 
-try:
-    from distutils.core import setup
-except ImportError:
-    from setuptools import setup
-
-import pydot
+import pydot_ng
 import os
 
 os.environ['COPY_EXTENDED_ATTRIBUTES_DISABLE'] = 'true'
 os.environ['COPYFILE_DISABLE'] = 'true'
 
 setup(
-    name='pydot',
-    version=pydot.__version__,
+    name='pydot_ng',
+    version=pydot_ng.__version__,
     description='Python interface to Graphviz\'s Dot',
     author='Ero Carrera',
     author_email='ero@dkbza.org',
-    url='http://code.google.com/p/pydot/',
-    download_url='http://pydot.googlecode.com/files/pydot-%s.tar.gz' % pydot.__version__,
+    maintainer='Sebastian Kalinowski',
+    maintainer_email='sebastian@kalinowski.eu',
     license='MIT',
     keywords='graphviz dot graphs visualization',
     platforms=['any'],
@@ -32,8 +28,10 @@ setup(
         'Topic :: Scientific/Engineering :: Visualization',
         'Topic :: Software Development :: Libraries :: Python Modules'
         ],
-    long_description="\n".join(pydot.__doc__.split('\n')),
-    packages=['pydot'],
-    package_dir={'pydot': 'pydot'},
-    install_requires=['pyparsing>=2.0.1',],
+    long_description="\n".join(pydot_ng.__doc__.split('\n')),
+    packages=['pydot_ng'],
+    package_dir={'pydot_ng': 'pydot_ng'},
+    install_requires=[
+        'pyparsing>=2.0.1',
+    ],
     )

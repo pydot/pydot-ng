@@ -15,7 +15,7 @@ __author__ = ['Michael Krause', 'Ero Carrera']
 __license__ = 'MIT'
 
 import sys
-import pydot
+import pydot_ng as pydot
 import codecs
 
 from pyparsing import __version__ as pyparsing_version
