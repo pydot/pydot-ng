@@ -1,3 +1,13 @@
+1.0.0 (unreleased)
+------------------
+
+- Added tox to run tests
+- Added Travis CI integration
+- Reset version numbering
+
+
+Original pydot changelog
+------------------------
 2004-04-28 21:50  carrer
 
 	* pydot.py: Some of the changes already made should allow pydot to

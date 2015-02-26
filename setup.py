@@ -12,7 +12,7 @@ with open('README.rst', 'r', 'utf-8') as f:
 
 setup(
     name='pydot_ng',
-    version='1.0.0',
+    version='1.0.0.dev0',
     description='Python interface to Graphviz\'s Dot',
     author='Ero Carrera',
     author_email='ero@dkbza.org',
