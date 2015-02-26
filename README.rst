@@ -28,8 +28,11 @@ Should suffice with doing:
 
 Needless to say, no installation is needed just to use the module. A mere:
 
- import pydot
+ import pydot_ng
 
 should do it, provided that the directory containing the modules is on Python
 module search path.
 
+This library is API compatible with original pydot so you can use it like this:
+
+ import pydot_ng as pydot

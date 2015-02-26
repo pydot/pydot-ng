@@ -1,15 +1,18 @@
 #!/usr/bin/env python
+from codecs import open
+import os
 from setuptools import setup
 
-import pydot_ng
-import os
 
 os.environ['COPY_EXTENDED_ATTRIBUTES_DISABLE'] = 'true'
 os.environ['COPYFILE_DISABLE'] = 'true'
 
+with open('README.rst', 'r', 'utf-8') as f:
+    readme = f.read()
+
 setup(
     name='pydot_ng',
-    version=pydot_ng.__version__,
+    version='1.0.0',
     description='Python interface to Graphviz\'s Dot',
     author='Ero Carrera',
     author_email='ero@dkbza.org',
@@ -28,7 +31,7 @@ setup(
         'Topic :: Scientific/Engineering :: Visualization',
         'Topic :: Software Development :: Libraries :: Python Modules'
         ],
-    long_description="\n".join(pydot_ng.__doc__.split('\n')),
+    long_description=readme,
     packages=['pydot_ng'],
     package_dir={'pydot_ng': 'pydot_ng'},
     install_requires=[
