@@ -18,6 +18,7 @@ setup(
     author_email='ero@dkbza.org',
     maintainer='Sebastian Kalinowski',
     maintainer_email='sebastian@kalinowski.eu',
+    url="https://github.com/pydot/pydot-ng",
     license='MIT',
     keywords='graphviz dot graphs visualization',
     platforms=['any'],
