@@ -1,18 +1,14 @@
-"""Graphviz's dot language parser.
+# Graphviz's dot language parser.
 
-The dotparser parses graphviz files in dot and dot files and transforms them
-into a class representation defined by pydot.
+# The dotparser parses graphviz files in dot and dot files and transforms them
+# into a class representation defined by pydot.
 
-The module needs pyparsing (tested with version 1.2.2) and pydot
+# The module needs pyparsing (tested with version 1.2.2) and pydot
 
-Author: Michael Krause <michael@krause-software.de>
-Fixes by: Ero Carrera <ero@dkbza.org>
-"""
+# Author: Michael Krause <michael@krause-software.de>
+# Fixes by: Ero Carrera <ero@dkbza.org>
 
 from __future__ import division, print_function
-
-__author__ = ['Michael Krause', 'Ero Carrera']
-__license__ = 'MIT'
 
 import sys
 import pydot_ng as pydot
@@ -26,6 +22,9 @@ from pyparsing import (
     cStyleComment, alphanums, printables, ParseException,
     ParseResults, CharsNotIn, QuotedString
     )
+
+__author__ = ['Michael Krause', 'Ero Carrera']
+__license__ = 'MIT'
 
 
 PY3 = not sys.version_info < (3, 0, 0)
@@ -134,7 +133,8 @@ def update_parent_graph_hierarchy(g, parent_graph=None, level=0):
 
         for key, objs in item_dict[key_name].items():
             for obj in objs:
-                if 'parent_graph' in obj and obj['parent_graph'].get_parent_graph() == g:
+                if ('parent_graph' in obj and
+                        obj['parent_graph'].get_parent_graph() == g):
                     if obj['parent_graph'] is g:
                         pass
                     else:
@@ -142,13 +142,15 @@ def update_parent_graph_hierarchy(g, parent_graph=None, level=0):
 
                 if key_name == 'edges' and len(key) == 2:
                     for idx, vertex in enumerate(obj['points']):
-                        if isinstance(vertex, (pydot.Graph, pydot.Subgraph, pydot.Cluster)):
+                        if isinstance(vertex, (pydot.Graph, pydot.Subgraph,
+                                               pydot.Cluster)):
                             vertex.set_parent_graph(parent_graph)
                         if isinstance(vertex, pydot.frozendict):
                             if vertex['parent_graph'] is g:
                                 pass
                             else:
-                                vertex['parent_graph'].set_parent_graph(parent_graph)
+                                vertex['parent_graph'].\
+                                    set_parent_graph(parent_graph)
 
 
 def add_defaults(element, defaults):
@@ -158,7 +160,8 @@ def add_defaults(element, defaults):
             d[key] = value
 
 
-def add_elements(g, toks, defaults_graph=None, defaults_node=None, defaults_edge=None):
+def add_elements(g, toks, defaults_graph=None, defaults_node=None,
+                 defaults_edge=None):
     if defaults_graph is None:
         defaults_graph = {}
     if defaults_node is None:
@@ -181,7 +184,8 @@ def add_elements(g, toks, defaults_graph=None, defaults_node=None, defaults_edge
 
         elif isinstance(element, ParseResults):
             for e in element:
-                add_elements(g, [e], defaults_graph, defaults_node, defaults_edge)
+                add_elements(g, [e], defaults_graph, defaults_node,
+                             defaults_edge)
 
         elif isinstance(element, DefaultStatement):
             if element.default_type == 'graph':
@@ -198,7 +202,8 @@ def add_elements(g, toks, defaults_graph=None, defaults_node=None, defaults_edge
                 defaults_edge.update(element.attrs)
 
             else:
-                raise ValueError("Unknown DefaultStatement: %s " % element.default_type)
+                raise ValueError("Unknown DefaultStatement: {0} ".
+                                 format(element.default_type))
 
         elif isinstance(element, P_AttrList):
             g.obj_dict['attributes'].update(element.attrs)
@@ -290,7 +295,8 @@ def push_edge_stmt(str, loc, toks):
             e.append(pydot.Edge(n_prev, n_next[0] + n_next_port, **attrs))
 
     elif isinstance(toks[2][0], pydot.Graph):
-        e.append(pydot.Edge(n_prev, pydot.frozendict(toks[2][0].obj_dict), **attrs))
+        e.append(pydot.Edge(n_prev, pydot.frozendict(toks[2][0].obj_dict),
+                            **attrs))
 
     elif isinstance(toks[2][0], pydot.Node):
         node = toks[2][0]
@@ -304,7 +310,8 @@ def push_edge_stmt(str, loc, toks):
 
     elif isinstance(toks[2][0], type('')):
         for n_next in [n for n in tuple(toks)[2::2]]:
-            if isinstance(n_next, P_AttrList) or not isinstance(n_next[0], type('')):
+            if isinstance(n_next, P_AttrList) or not isinstance(n_next[0],
+                                                                type('')):
                 continue
 
             n_next_port = do_node_ports(n_next)
@@ -352,10 +359,6 @@ def graph_definition():
         rparen = Literal(")")
         equals = Literal("=")
         comma = Literal(",")
-        # dot = Literal(".")
-        # slash = Literal("/")
-        # bslash = Literal("\\")
-        # star = Literal("*")
         semi = Literal(";")
         at = Literal("@")
         minus = Literal("-")
@@ -372,7 +375,8 @@ def graph_definition():
         identifier = Word(alphanums + "_.").setName("identifier")
 
         # dblQuotedString
-        double_quoted_string = QuotedString('"', multiline=True, unquoteResults=False)
+        double_quoted_string = QuotedString('"', multiline=True,
+                                            unquoteResults=False)
 
         noncomma_ = "".join([c for c in printables if c != ","])
         alphastring_ = OneOrMore(CharsNotIn(noncomma_ + ' '))
@@ -389,7 +393,7 @@ def graph_definition():
 
         ID = (
             identifier | html_text |
-            double_quoted_string |  # .setParseAction(strip_quotes) |
+            double_quoted_string |
             alphastring_
             ).setName("ID")
 
@@ -421,7 +425,8 @@ def graph_definition():
             lbrack.suppress() + Optional(a_list) + rbrack.suppress()
             ).setName("attr_list")
 
-        attr_stmt = (Group(graph_ | node_ | edge_) + attr_list).setName("attr_stmt")
+        attr_stmt = (Group(graph_ | node_ | edge_) + attr_list).\
+            setName("attr_stmt")
 
         edgeop = (Literal("--") | Literal("->")).setName("edgeop")
 
@@ -436,9 +441,11 @@ def graph_definition():
         edgeRHS = OneOrMore(edgeop + edge_point)
         edge_stmt = edge_point + edgeRHS + Optional(attr_list)
 
-        subgraph = Group(subgraph_ + Optional(ID) + graph_stmt).setName("subgraph")
+        subgraph = Group(subgraph_ + Optional(ID) + graph_stmt).\
+            setName("subgraph")
 
-        edge_point << Group(subgraph | graph_stmt | node_id).setName('edge_point')
+        edge_point << Group(subgraph | graph_stmt | node_id).\
+            setName('edge_point')
 
         node_stmt = (
             node_id + Optional(attr_list) + Optional(semi.suppress())
