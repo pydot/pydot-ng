@@ -1,31 +1,24 @@
-"""Graphviz's dot language parser.
+# Graphviz's dot language parser.
 
-The dotparser parses graphviz files in dot and dot files and transforms them
-into a class representation defined by pydot.
+# The dotparser parses graphviz files in dot and dot files and transforms them
+# into a class representation defined by pydot.
 
-The module needs pyparsing (tested with version 1.2.2) and pydot
+# The module needs pyparsing (tested with version 1.2.2) and pydot
 
-Author: Michael Krause <michael@krause-software.de>
-Fixes by: Ero Carrera <ero@dkbza.org>
-"""
+# Author: Michael Krause <michael@krause-software.de>
+# Fixes by: Ero Carrera <ero@dkbza.org>
 
-from __future__ import division, print_function
+from __future__ import division
+from __future__ import print_function
+
+import codecs
+import pydot_ng as pydot
+import pyparsing
+import sys
+
 
 __author__ = ['Michael Krause', 'Ero Carrera']
 __license__ = 'MIT'
-
-import sys
-import pydot_ng as pydot
-import codecs
-
-from pyparsing import __version__ as pyparsing_version
-
-from pyparsing import (
-    nestedExpr, Literal, CaselessLiteral, Word, OneOrMore,
-    Forward, Group, Optional, Combine, nums, restOfLine,
-    cStyleComment, alphanums, printables, ParseException,
-    ParseResults, CharsNotIn, QuotedString
-    )
 
 
 PY3 = not sys.version_info < (3, 0, 0)
@@ -34,7 +27,7 @@ if PY3:
     basestring = str
 
 
-class P_AttrList:
+class P_AttrList(object):
 
     def __init__(self, toks):
         self.attrs = {}
@@ -76,7 +69,7 @@ def push_top_graph_stmt(str, loc, toks):
     g = None
 
     for element in toks:
-        if (isinstance(element, (ParseResults, tuple, list)) and
+        if (isinstance(element, (pyparsing.ParseResults, tuple, list)) and
                 len(element) == 1 and isinstance(element[0], basestring)):
             element = element[0]
 
@@ -104,7 +97,7 @@ def push_top_graph_stmt(str, loc, toks):
         elif isinstance(element, P_AttrList):
             attrs.update(element.attrs)
 
-        elif isinstance(element, (ParseResults, list)):
+        elif isinstance(element, (pyparsing.ParseResults, list)):
             add_elements(g, element)
 
         else:
@@ -134,7 +127,8 @@ def update_parent_graph_hierarchy(g, parent_graph=None, level=0):
 
         for key, objs in item_dict[key_name].items():
             for obj in objs:
-                if 'parent_graph' in obj and obj['parent_graph'].get_parent_graph() == g:
+                if ('parent_graph' in obj and
+                        obj['parent_graph'].get_parent_graph() == g):
                     if obj['parent_graph'] is g:
                         pass
                     else:
@@ -142,13 +136,15 @@ def update_parent_graph_hierarchy(g, parent_graph=None, level=0):
 
                 if key_name == 'edges' and len(key) == 2:
                     for idx, vertex in enumerate(obj['points']):
-                        if isinstance(vertex, (pydot.Graph, pydot.Subgraph, pydot.Cluster)):
+                        if isinstance(vertex, (pydot.Graph, pydot.Subgraph,
+                                               pydot.Cluster)):
                             vertex.set_parent_graph(parent_graph)
                         if isinstance(vertex, pydot.frozendict):
                             if vertex['parent_graph'] is g:
                                 pass
                             else:
-                                vertex['parent_graph'].set_parent_graph(parent_graph)
+                                vertex['parent_graph'].\
+                                    set_parent_graph(parent_graph)
 
 
 def add_defaults(element, defaults):
@@ -158,7 +154,8 @@ def add_defaults(element, defaults):
             d[key] = value
 
 
-def add_elements(g, toks, defaults_graph=None, defaults_node=None, defaults_edge=None):
+def add_elements(g, toks, defaults_graph=None, defaults_node=None,
+                 defaults_edge=None):
     if defaults_graph is None:
         defaults_graph = {}
     if defaults_node is None:
@@ -179,9 +176,10 @@ def add_elements(g, toks, defaults_graph=None, defaults_node=None, defaults_edge
             add_defaults(element, defaults_edge)
             g.add_edge(element)
 
-        elif isinstance(element, ParseResults):
+        elif isinstance(element, pyparsing.ParseResults):
             for e in element:
-                add_elements(g, [e], defaults_graph, defaults_node, defaults_edge)
+                add_elements(g, [e], defaults_graph, defaults_node,
+                             defaults_edge)
 
         elif isinstance(element, DefaultStatement):
             if element.default_type == 'graph':
@@ -198,7 +196,8 @@ def add_elements(g, toks, defaults_graph=None, defaults_node=None, defaults_edge
                 defaults_edge.update(element.attrs)
 
             else:
-                raise ValueError("Unknown DefaultStatement: %s " % element.default_type)
+                raise ValueError("Unknown DefaultStatement: {0} ".
+                                 format(element.default_type))
 
         elif isinstance(element, P_AttrList):
             g.obj_dict['attributes'].update(element.attrs)
@@ -220,11 +219,11 @@ def push_subgraph_stmt(str, loc, toks):
         if len(e) == 3:
             e[2].set_name(e[1])
             if e[0] == 'subgraph':
-                e[2].obj_dict['show_keyword'] = True
+                e[2].obj_dict['show_keypyparsing.Word'] = True
             return e[2]
         else:
             if e[0] == 'subgraph':
-                e[1].obj_dict['show_keyword'] = True
+                e[1].obj_dict['show_keypyparsing.Word'] = True
             return e[1]
 
     return g
@@ -253,7 +252,7 @@ def push_attr_list(str, loc, toks):
 
 def get_port(node):
     if len(node) > 1:
-        if isinstance(node[1], ParseResults):
+        if isinstance(node[1], pyparsing.ParseResults):
             if len(node[1][0]) == 2:
                 if node[1][0][0] == ':':
                     return node[1][0][1]
@@ -283,14 +282,15 @@ def push_edge_stmt(str, loc, toks):
     else:
         n_prev = toks[0][0] + do_node_ports(toks[0])
 
-    if isinstance(toks[2][0], ParseResults):
+    if isinstance(toks[2][0], pyparsing.ParseResults):
         n_next_list = [[n.get_name()] for n in toks[2][0]]
         for n_next in [n for n in n_next_list]:
             n_next_port = do_node_ports(n_next)
             e.append(pydot.Edge(n_prev, n_next[0] + n_next_port, **attrs))
 
     elif isinstance(toks[2][0], pydot.Graph):
-        e.append(pydot.Edge(n_prev, pydot.frozendict(toks[2][0].obj_dict), **attrs))
+        e.append(pydot.Edge(n_prev, pydot.frozendict(toks[2][0].obj_dict),
+                            **attrs))
 
     elif isinstance(toks[2][0], pydot.Node):
         node = toks[2][0]
@@ -304,7 +304,8 @@ def push_edge_stmt(str, loc, toks):
 
     elif isinstance(toks[2][0], type('')):
         for n_next in [n for n in tuple(toks)[2::2]]:
-            if isinstance(n_next, P_AttrList) or not isinstance(n_next[0], type('')):
+            if isinstance(n_next, P_AttrList) or not isinstance(n_next[0],
+                                                                type('')):
                 continue
 
             n_next_port = do_node_ports(n_next)
@@ -343,59 +344,58 @@ def graph_definition():
 
     if not graphparser:
         # punctuation
-        colon = Literal(":")
-        lbrace = Literal("{")
-        rbrace = Literal("}")
-        lbrack = Literal("[")
-        rbrack = Literal("]")
-        lparen = Literal("(")
-        rparen = Literal(")")
-        equals = Literal("=")
-        comma = Literal(",")
-        # dot = Literal(".")
-        # slash = Literal("/")
-        # bslash = Literal("\\")
-        # star = Literal("*")
-        semi = Literal(";")
-        at = Literal("@")
-        minus = Literal("-")
+        colon = pyparsing.Literal(":")
+        lbrace = pyparsing.Literal("{")
+        rbrace = pyparsing.Literal("}")
+        lbrack = pyparsing.Literal("[")
+        rbrack = pyparsing.Literal("]")
+        lparen = pyparsing.Literal("(")
+        rparen = pyparsing.Literal(")")
+        equals = pyparsing.Literal("=")
+        comma = pyparsing.Literal(",")
+        semi = pyparsing.Literal(";")
+        at = pyparsing.Literal("@")
+        minus = pyparsing.Literal("-")
 
-        # keywords
-        strict_ = CaselessLiteral("strict")
-        graph_ = CaselessLiteral("graph")
-        digraph_ = CaselessLiteral("digraph")
-        subgraph_ = CaselessLiteral("subgraph")
-        node_ = CaselessLiteral("node")
-        edge_ = CaselessLiteral("edge")
+        # keypyparsing.Words
+        strict_ = pyparsing.CaselessLiteral("strict")
+        graph_ = pyparsing.CaselessLiteral("graph")
+        digraph_ = pyparsing.CaselessLiteral("digraph")
+        subgraph_ = pyparsing.CaselessLiteral("subgraph")
+        node_ = pyparsing.CaselessLiteral("node")
+        edge_ = pyparsing.CaselessLiteral("edge")
 
         # token definitions
-        identifier = Word(alphanums + "_.").setName("identifier")
+        identifier = pyparsing.Word(pyparsing.alphapyparsing.nums + "_.").\
+            setName("identifier")
 
-        # dblQuotedString
-        double_quoted_string = QuotedString('"', multiline=True, unquoteResults=False)
+        # dblpyparsing.QuotedString
+        double_quoted_string = pyparsing.QuotedString('"', multiline=True,
+                                                      unquoteResults=False)
 
-        noncomma_ = "".join([c for c in printables if c != ","])
-        alphastring_ = OneOrMore(CharsNotIn(noncomma_ + ' '))
+        noncomma_ = "".join([c for c in pyparsing.printables if c != ","])
+        alphastring_ = pyparsing.OneOrMore(pyparsing.CharsNotIn(noncomma_ +
+                                                                ' '))
 
         def parse_html(s, loc, toks):
             return '<%s>' % ''.join(toks[0])
 
         opener = '<'
         closer = '>'
-        html_text = nestedExpr(
+        html_text = pyparsing.nestedExpr(
             opener, closer,
-            (CharsNotIn(opener + closer))
+            (pyparsing.CharsNotIn(opener + closer))
             ).setParseAction(parse_html).leaveWhitespace()
 
         ID = (
             identifier | html_text |
-            double_quoted_string |  # .setParseAction(strip_quotes) |
+            double_quoted_string |
             alphastring_
             ).setName("ID")
 
-        float_number = Combine(
-            Optional(minus) +
-            OneOrMore(Word(nums + "."))
+        float_number = pyparsing.Combine(
+            pyparsing.Optional(minus) +
+            pyparsing.OneOrMore(pyparsing.Word(pyparsing.nums + "."))
             ).setName("float_number")
 
         righthand_id = (float_number | ID).setName("righthand_id")
@@ -403,64 +403,72 @@ def graph_definition():
         port_angle = (at + ID).setName("port_angle")
 
         port_location = (
-            OneOrMore(Group(colon + ID)) |
-            Group(colon + lparen + ID + comma + ID + rparen)
+            pyparsing.OneOrMore(pyparsing.Group(colon + ID)) |
+            pyparsing.Group(colon + lparen + ID + comma + ID + rparen)
             ).setName("port_location")
 
         port = (
-            Group(port_location + Optional(port_angle)) |
-            Group(port_angle + Optional(port_location))
+            pyparsing.Group(port_location + pyparsing.Optional(port_angle)) |
+            pyparsing.Group(port_angle + pyparsing.Optional(port_location))
             ).setName("port")
 
-        node_id = (ID + Optional(port))
-        a_list = OneOrMore(
-            ID + Optional(equals + righthand_id) + Optional(comma.suppress())
+        node_id = (ID + pyparsing.Optional(port))
+        a_list = pyparsing.OneOrMore(
+            ID + pyparsing.Optional(equals + righthand_id) +
+            pyparsing.Optional(comma.suppress())
             ).setName("a_list")
 
-        attr_list = OneOrMore(
-            lbrack.suppress() + Optional(a_list) + rbrack.suppress()
+        attr_list = pyparsing.OneOrMore(
+            lbrack.suppress() + pyparsing.Optional(a_list) + rbrack.suppress()
             ).setName("attr_list")
 
-        attr_stmt = (Group(graph_ | node_ | edge_) + attr_list).setName("attr_stmt")
+        attr_stmt = (pyparsing.Group(graph_ | node_ | edge_) + attr_list).\
+            setName("attr_stmt")
 
-        edgeop = (Literal("--") | Literal("->")).setName("edgeop")
+        edgeop = (pyparsing.Literal("--") | pyparsing.Literal("->")).\
+            setName("edgeop")
 
-        stmt_list = Forward()
-        graph_stmt = Group(
-            lbrace.suppress() + Optional(stmt_list) +
-            rbrace.suppress() + Optional(semi.suppress())
+        stmt_list = pyparsing.Forward()
+        graph_stmt = pyparsing.Group(
+            lbrace.suppress() + pyparsing.Optional(stmt_list) +
+            rbrace.suppress() + pyparsing.Optional(semi.suppress())
             ).setName("graph_stmt")
 
-        edge_point = Forward()
+        edge_point = pyparsing.Forward()
 
-        edgeRHS = OneOrMore(edgeop + edge_point)
-        edge_stmt = edge_point + edgeRHS + Optional(attr_list)
+        edgeRHS = pyparsing.OneOrMore(edgeop + edge_point)
+        edge_stmt = edge_point + edgeRHS + pyparsing.Optional(attr_list)
 
-        subgraph = Group(subgraph_ + Optional(ID) + graph_stmt).setName("subgraph")
+        subgraph = pyparsing.Group(subgraph_ +
+                                   pyparsing.Optional(ID) + graph_stmt).\
+            setName("subgraph")
 
-        edge_point << Group(subgraph | graph_stmt | node_id).setName('edge_point')
+        edge_point << pyparsing.Group(subgraph | graph_stmt | node_id).\
+            setName('edge_point')
 
-        node_stmt = (
-            node_id + Optional(attr_list) + Optional(semi.suppress())
-            ).setName("node_stmt")
+        node_stmt = (node_id + pyparsing.Optional(attr_list) +
+                     pyparsing.Optional(semi.suppress())).setName("node_stmt")
 
         assignment = (ID + equals + righthand_id).setName("assignment")
         stmt = (
             assignment | edge_stmt | attr_stmt |
             subgraph | graph_stmt | node_stmt
             ).setName("stmt")
-        stmt_list << OneOrMore(stmt + Optional(semi.suppress()))
+        stmt_list << pyparsing.OneOrMore(stmt + pyparsing.Optional(
+            semi.suppress()))
 
-        graphparser = OneOrMore((
-            Optional(strict_) + Group((graph_ | digraph_)) +
-            Optional(ID) + graph_stmt
+        graphparser = pyparsing.OneOrMore((
+            pyparsing.Optional(strict_) +
+            pyparsing.Group((graph_ | digraph_)) +
+            pyparsing.Optional(ID) + graph_stmt
             ).setResultsName("graph"))
 
-        singleLineComment = Group("//" + restOfLine) | Group("#" + restOfLine)
+        singleLineComment = (pyparsing.Group("//" + pyparsing.restOfLine) |
+                             pyparsing.Group("#" + pyparsing.restOfLine))
 
         # actions
         graphparser.ignore(singleLineComment)
-        graphparser.ignore(cStyleComment)
+        graphparser.ignore(pyparsing.cStyleComment)
 
         assignment.setParseAction(push_attr_list)
         a_list.setParseAction(push_attr_list)
@@ -492,7 +500,7 @@ def parse_dot_data(data):
                     idx += 1
                 charset = data[fst:idx].strip(b'"\'').decode('ascii')
                 data = data.decode(charset)
-            except:
+            except Exception:
                 data = data.decode('utf-8')
     else:
         if data.startswith(codecs.BOM_UTF8):
@@ -502,7 +510,7 @@ def parse_dot_data(data):
 
         graphparser = graph_definition()
 
-        if pyparsing_version >= '1.2':
+        if pyparsing.__version__ >= '1.2':
             graphparser.parseWithTabs()
 
         tokens = graphparser.parseString(data)
@@ -512,7 +520,7 @@ def parse_dot_data(data):
         else:
             return [g for g in tokens]
 
-    except ParseException:
+    except pyparsing.ParseException:
         err = sys.exc_info()[1]
         print(err.line)
         print(" " * (err.column - 1) + "^")
