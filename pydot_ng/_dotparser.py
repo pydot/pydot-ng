@@ -366,7 +366,7 @@ def graph_definition():
         edge_ = pyparsing.CaselessLiteral("edge")
 
         # token definitions
-        identifier = pyparsing.Word(pyparsing.alphapyparsing.nums + "_.").\
+        identifier = pyparsing.Word(pyparsing.alphanums + "_.").\
             setName("identifier")
 
         # dblpyparsing.QuotedString
