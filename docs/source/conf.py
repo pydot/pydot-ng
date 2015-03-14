@@ -16,6 +16,8 @@ import sys
 import os
 import shlex
 
+import sphinx
+
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
@@ -41,7 +43,10 @@ extensions = [
 templates_path = ['_templates']
 
 # The suffix(es) of source filenames.
-source_suffix = ['.rst']
+if sphinx.__version__.startswith('1.3'):
+    source_suffix = ['.rst']
+else:
+    source_suffix = '.rst'
 
 # The encoding of source files.
 #source_encoding = 'utf-8-sig'
