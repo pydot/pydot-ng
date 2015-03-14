@@ -1,7 +1,7 @@
 1.0.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Adjusted quoting of IDs (lables, attrs, etc.) to be in line with DOT sepcs
 
 
 1.0.0 (2015-02-26)
