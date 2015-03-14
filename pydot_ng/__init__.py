@@ -198,15 +198,13 @@ class frozendict(dict):
         return "frozendict(%s)" % dict.__repr__(self)
 
 
-dot_keywords = ['graph', 'subgraph', 'digraph', 'node', 'edge', 'strict']
-
-id_re_alpha_nums = re.compile('^[_a-zA-Z][a-zA-Z0-9_,]*$', re.UNICODE)
-id_re_alpha_nums_with_ports = re.compile(
-    '^[_a-zA-Z][a-zA-Z0-9_,:\"]*[a-zA-Z0-9_,\"]+$', re.UNICODE)
-id_re_num = re.compile('^[0-9,]+$', re.UNICODE)
-id_re_with_port = re.compile('^([^:]*):([^:]*)$', re.UNICODE)
-id_re_dbl_quoted = re.compile('^\".*\"$', re.S | re.UNICODE)
-id_re_html = re.compile('^<.*>$', re.S | re.UNICODE)
+# cases when no qoutes needed, from http://www.graphviz.org/doc/info/lang.html
+dot_keywords = ('graph', 'subgraph', 'digraph', 'node', 'edge', 'strict')
+id_alpha_num = re.compile(r'^[_a-zA-Z\200-\377][_a-zA-Z0-9\200-\377]*$',
+                          re.UNICODE)
+id_num = re.compile(r'^[-]?(\.[0-9]+|[0-9]+(\.[0-9]*)?)$', re.UNICODE)
+id_html = re.compile(r'^<.*>$', re.DOTALL | re.UNICODE)
+id_quoted = re.compile(r'^".*"$', re.DOTALL | re.UNICODE)
 
 
 def needs_quotes(s):
@@ -228,19 +226,18 @@ def needs_quotes(s):
     if s in dot_keywords:
         return False
 
-    chars = [ord(c) for c in s if ord(c) > 0x7f or ord(c) == 0]
-    if chars and not id_re_dbl_quoted.match(s) and not id_re_html.match(s):
-        return True
-
     for test_re in [
-            id_re_alpha_nums, id_re_num, id_re_dbl_quoted,
-            id_re_html, id_re_alpha_nums_with_ports]:
+        id_alpha_num,
+        id_num,
+        id_html,
+        id_quoted,
+    ]:
         if test_re.match(s):
             return False
 
-    m = id_re_with_port.match(s)
-    if m:
-        return needs_quotes(m.group(1)) or needs_quotes(m.group(2))
+    chars = [ord(c) for c in s if ord(c) > 0x7f or ord(c) == 0]
+    if chars and not id_quoted.match(s) and not id_html.match(s):
+        return True
 
     return True
 
