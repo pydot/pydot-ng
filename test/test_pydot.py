@@ -304,6 +304,8 @@ class TestQuoting(unittest.TestCase):
             ('"1abc"', '"1abc"'),
             ('@', '"@"'),
             ('ÿ', 'ÿ'),
+            ('$GUID__/ffb73e1c-7495-40b3-9618-9e5462fc89c7',
+             '"$GUID__/ffb73e1c-7495-40b3-9618-9e5462fc89c7"')
         )
 
         for input, expected in checks:
