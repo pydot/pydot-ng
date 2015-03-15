@@ -285,6 +285,33 @@ class TestGraphAPI(unittest.TestCase):
         data = g.create(format='jpe')
         self.assertEqual(len(data) > 0, True)
 
+
+class TestQuoting(unittest.TestCase):
+
+    def test_quote_cases(self):
+        checks = (
+            ('A:', '"A:"'),
+            (':B', '":B"'),
+            ('A:B', '"A:B"'),
+            ('1A', '"1A"'),
+            ('A', 'A'),
+            ('11', '11'),
+            ('_xyz', '_xyz'),
+            ('.11', '.11'),
+            ('-.09', '-.09'),
+            ('1.8', '1.8'),
+            ('', '""'),
+            ('"1abc"', '"1abc"'),
+            ('@', '"@"'),
+            ('ÿ', 'ÿ'),
+            ('$GUID__/ffb73e1c-7495-40b3-9618-9e5462fc89c7',
+             '"$GUID__/ffb73e1c-7495-40b3-9618-9e5462fc89c7"')
+        )
+
+        for input, expected in checks:
+            self.assertEqual(pydot.quote_if_necessary(input), expected)
+
+
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(TestGraphAPI)
     unittest.TextTestRunner(verbosity=2).run(suite)
