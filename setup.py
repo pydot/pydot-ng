@@ -30,12 +30,9 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Topic :: Scientific/Engineering :: Visualization',
-        'Topic :: Software Development :: Libraries :: Python Modules'
-        ],
+        'Topic :: Software Development :: Libraries :: Python Modules'],
     long_description=readme,
     packages=['pydot_ng'],
     package_dir={'pydot_ng': 'pydot_ng'},
-    install_requires=[
-        'pyparsing>=2.0.1',
-    ],
-    )
+    install_requires=['pyparsing>=2.0.1'],
+)

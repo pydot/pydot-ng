@@ -131,8 +131,7 @@ class TestGraphAPI(unittest.TestCase):
         pngs = [
             os.path.join(shapefile_dir, fname)
             for fname in os.listdir(shapefile_dir)
-            if fname.endswith('.png')
-            ]
+            if fname.endswith('.png')]
 
         f = open(dot_file, 'rt')
         graph_data = f.read()
@@ -156,8 +155,7 @@ class TestGraphAPI(unittest.TestCase):
             (DOT_BINARY_PATH, '-Tjpe'),
             cwd=os.path.dirname(filename),
             stdin=open(filename, 'rt'),
-            stderr=subprocess.PIPE, stdout=subprocess.PIPE
-            )
+            stderr=subprocess.PIPE, stdout=subprocess.PIPE)
 
         stdout = p.stdout
 
@@ -195,8 +193,7 @@ class TestGraphAPI(unittest.TestCase):
 
         dot_files = [
             fname for fname in os.listdir(directory)
-            if fname.endswith('.dot')
-            ]
+            if fname.endswith('.dot')]
 
         for dot in dot_files:
             os.sys.stdout.write('#')

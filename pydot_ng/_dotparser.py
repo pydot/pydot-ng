@@ -57,8 +57,7 @@ class DefaultStatement(P_AttrList):
     def __repr__(self):
         return "%s(%s, %r)" % (
             self.__class__.__name__,
-            self.default_type, self.attrs
-            )
+            self.default_type, self.attrs)
 
 
 top_graphs = list()
@@ -384,19 +383,18 @@ def graph_definition():
         closer = '>'
         html_text = pyparsing.nestedExpr(
             opener, closer,
-            (pyparsing.CharsNotIn(opener + closer))
-            ).setParseAction(parse_html).leaveWhitespace()
+            (pyparsing.CharsNotIn(opener + closer))).\
+            setParseAction(parse_html).leaveWhitespace()
 
         ID = (
             identifier | html_text |
             double_quoted_string |
-            alphastring_
-            ).setName("ID")
+            alphastring_).setName("ID")
 
         float_number = pyparsing.Combine(
             pyparsing.Optional(minus) +
-            pyparsing.OneOrMore(pyparsing.Word(pyparsing.nums + "."))
-            ).setName("float_number")
+            pyparsing.OneOrMore(pyparsing.Word(pyparsing.nums + "."))).\
+            setName("float_number")
 
         righthand_id = (float_number | ID).setName("righthand_id")
 
@@ -404,23 +402,23 @@ def graph_definition():
 
         port_location = (
             pyparsing.OneOrMore(pyparsing.Group(colon + ID)) |
-            pyparsing.Group(colon + lparen + ID + comma + ID + rparen)
-            ).setName("port_location")
+            pyparsing.Group(colon + lparen + ID + comma + ID + rparen)).\
+            setName("port_location")
 
         port = (
             pyparsing.Group(port_location + pyparsing.Optional(port_angle)) |
-            pyparsing.Group(port_angle + pyparsing.Optional(port_location))
-            ).setName("port")
+            pyparsing.Group(port_angle + pyparsing.Optional(port_location))).\
+            setName("port")
 
         node_id = (ID + pyparsing.Optional(port))
         a_list = pyparsing.OneOrMore(
             ID + pyparsing.Optional(equals + righthand_id) +
-            pyparsing.Optional(comma.suppress())
-            ).setName("a_list")
+            pyparsing.Optional(comma.suppress())).\
+            setName("a_list")
 
         attr_list = pyparsing.OneOrMore(
-            lbrack.suppress() + pyparsing.Optional(a_list) + rbrack.suppress()
-            ).setName("attr_list")
+            lbrack.suppress() + pyparsing.Optional(a_list) +
+            rbrack.suppress()).setName("attr_list")
 
         attr_stmt = (pyparsing.Group(graph_ | node_ | edge_) + attr_list).\
             setName("attr_stmt")
@@ -431,8 +429,8 @@ def graph_definition():
         stmt_list = pyparsing.Forward()
         graph_stmt = pyparsing.Group(
             lbrace.suppress() + pyparsing.Optional(stmt_list) +
-            rbrace.suppress() + pyparsing.Optional(semi.suppress())
-            ).setName("graph_stmt")
+            rbrace.suppress() + pyparsing.Optional(semi.suppress())).\
+            setName("graph_stmt")
 
         edge_point = pyparsing.Forward()
 
@@ -452,16 +450,16 @@ def graph_definition():
         assignment = (ID + equals + righthand_id).setName("assignment")
         stmt = (
             assignment | edge_stmt | attr_stmt |
-            subgraph | graph_stmt | node_stmt
-            ).setName("stmt")
+            subgraph | graph_stmt | node_stmt).\
+            setName("stmt")
         stmt_list << pyparsing.OneOrMore(stmt + pyparsing.Optional(
             semi.suppress()))
 
         graphparser = pyparsing.OneOrMore((
             pyparsing.Optional(strict_) +
             pyparsing.Group((graph_ | digraph_)) +
-            pyparsing.Optional(ID) + graph_stmt
-            ).setResultsName("graph"))
+            pyparsing.Optional(ID) + graph_stmt).
+            setResultsName("graph"))
 
         singleLineComment = (pyparsing.Group("//" + pyparsing.restOfLine) |
                              pyparsing.Group("#" + pyparsing.restOfLine))

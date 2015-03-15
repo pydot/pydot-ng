@@ -202,8 +202,7 @@ dot_keywords = ['graph', 'subgraph', 'digraph', 'node', 'edge', 'strict']
 
 id_re_alpha_nums = re.compile('^[_a-zA-Z][a-zA-Z0-9_,]*$', re.UNICODE)
 id_re_alpha_nums_with_ports = re.compile(
-    '^[_a-zA-Z][a-zA-Z0-9_,:\"]*[a-zA-Z0-9_,\"]+$', re.UNICODE
-    )
+    '^[_a-zA-Z][a-zA-Z0-9_,:\"]*[a-zA-Z0-9_,\"]+$', re.UNICODE)
 id_re_num = re.compile('^[0-9,]+$', re.UNICODE)
 id_re_with_port = re.compile('^([^:]*):([^:]*)$', re.UNICODE)
 id_re_dbl_quoted = re.compile('^\".*\"$', re.S | re.UNICODE)
@@ -364,9 +363,7 @@ def graph_from_adjacency_matrix(matrix, node_prefix='', directed=False):
                 graph.add_edge(
                     Edge(
                         node_prefix + node_orig,
-                        node_prefix + node_dest
-                        )
-                    )
+                        node_prefix + node_dest))
             node_dest += 1
         node_orig += 1
 
@@ -402,9 +399,7 @@ def graph_from_incidence_matrix(matrix, node_prefix='', directed=False):
             graph.add_edge(
                 Edge(
                     node_prefix + abs(nodes[0]),
-                    node_prefix + nodes[1]
-                    )
-                )
+                    node_prefix + nodes[1]))
 
     if not directed:
         graph.set_simplify(True)
@@ -521,8 +516,7 @@ def find_graphviz():
                 # this has a return value, which we should probably check
                 ctypes.windll.advapi32.RegQueryValueExA(
                     hkey, valuename, 0, ctypes.byref(data_type),
-                    data, ctypes.byref(data_len)
-                    )
+                    data, ctypes.byref(data_len))
 
                 return data.value
 
@@ -537,15 +531,13 @@ def find_graphviz():
             hkey = None
             potentialKeys = [
                 "SOFTWARE\\ATT\\Graphviz",
-                "SOFTWARE\\AT&T Research Labs\\Graphviz"
-                ]
+                "SOFTWARE\\AT&T Research Labs\\Graphviz"]
             for potentialKey in potentialKeys:
 
                 try:
                     hkey = RegOpenKeyEx(
                         HKEY_LOCAL_MACHINE,
-                        potentialKey, 0, KEY_QUERY_VALUE
-                        )
+                        potentialKey, 0, KEY_QUERY_VALUE)
 
                     if hkey is not None:
                         path = RegQueryValueEx(hkey, "InstallPath")
@@ -598,8 +590,7 @@ def find_graphviz():
             '/usr/bin', '/usr/local/bin',
             '/opt/local/bin',
             '/opt/bin', '/sw/bin', '/usr/share',
-            '/Applications/Graphviz.app/Contents/MacOS/'
-            ):
+            '/Applications/Graphviz.app/Contents/MacOS/'):
 
         progs = __find_executables(path)
         if progs is not None:
@@ -705,8 +696,8 @@ class Common(object):
             # Generate all the Setter methods.
             self.__setattr__(
                 'set_' + attr,
-                lambda x, a=attr: self.obj_dict['attributes'].__setitem__(a, x)
-                )
+                lambda x, a=attr: self.obj_dict['attributes'].
+                __setitem__(a, x))
 
             # Generate all the Getter methods.
             self.__setattr__('get_' + attr,
@@ -1040,8 +1031,7 @@ class Graph(Common):
             if graph_type not in ['graph', 'digraph']:
                 raise Error((
                     'Invalid type "%s". Accepted graph types are: '
-                    'graph, digraph, subgraph' % graph_type
-                    ))
+                    'graph, digraph, subgraph' % graph_type))
 
             self.obj_dict['name'] = quote_if_necessary(graph_name)
             self.obj_dict['type'] = graph_type
@@ -1244,8 +1234,7 @@ class Graph(Common):
             match.extend([
                 Node(obj_dict=obj_dict)
                 for obj_dict
-                in self.obj_dict['nodes'][name]
-                ])
+                in self.obj_dict['nodes'][name]])
 
         return match
 
@@ -1265,8 +1254,7 @@ class Graph(Common):
             node_objs.extend([
                 Node(obj_dict=obj_d)
                 for obj_d
-                in obj_dict_list
-                ])
+                in obj_dict_list])
 
         return node_objs
 
@@ -1354,8 +1342,7 @@ class Graph(Common):
 
         if edge_points in self.obj_dict['edges'] or (
                 self.get_top_graph_type() == 'graph' and
-                edge_points_reverse in self.obj_dict['edges']
-                ):
+                edge_points_reverse in self.obj_dict['edges']):
 
             edges_obj_dict = self.obj_dict['edges'].get(
                 edge_points,
@@ -1383,8 +1370,7 @@ class Graph(Common):
             edge_objs.extend([
                 Edge(obj_dict=obj_d)
                 for obj_d
-                in obj_dict_list
-                ])
+                in obj_dict_list])
 
         return edge_objs
 
@@ -1450,8 +1436,7 @@ class Graph(Common):
             sgraph_objs.extend([
                 Subgraph(obj_dict=obj_d)
                 for obj_d
-                in obj_dict_list
-                ])
+                in obj_dict_list])
 
         return sgraph_objs
 
@@ -1525,8 +1510,7 @@ class Graph(Common):
         obj_list = sorted([
             (obj['sequence'], obj)
             for obj
-            in (edge_obj_dicts + node_obj_dicts + sgraph_obj_dicts)
-            ])
+            in (edge_obj_dicts + node_obj_dicts + sgraph_obj_dicts)])
 
         for idx, obj in obj_list:
             if obj['type'] == 'node':
@@ -1663,8 +1647,7 @@ class Dot(Graph):
             'fig', 'gd', 'gd2', 'gif', 'hpgl', 'imap', 'imap_np', 'ismap',
             'jpe', 'jpeg', 'jpg', 'mif', 'mp', 'pcl', 'pdf', 'pic', 'plain',
             'plain-ext', 'png', 'ps', 'ps2', 'svg', 'svgz', 'vml', 'vmlz',
-            'vrml', 'vtx', 'wbmp', 'xdot', 'xlib'
-            ]
+            'vrml', 'vtx', 'wbmp', 'xdot', 'xlib']
         self.prog = 'dot'
 
         # Automatically creates all the methods enabling the creation
@@ -1672,26 +1655,23 @@ class Dot(Graph):
         for frmt in self.formats:
             self.__setattr__(
                 'create_' + frmt,
-                lambda f=frmt, prog=self.prog: self.create(format=f, prog=prog)
-                )
+                lambda f=frmt, prog=self.prog:
+                self.create(format=f, prog=prog))
             f = self.__dict__['create_' + frmt]
             f.__doc__ = (
                 '''Refer to the docstring accompanying the'''
-                ''''create' method for more information.'''
-                )
+                ''''create' method for more information.''')
 
         for frmt in self.formats + ['raw']:
             self.__setattr__(
                 'write_' + frmt,
                 lambda path, f=frmt, prog=self.prog: self.write(path, format=f,
-                                                                prog=prog)
-                )
+                                                                prog=prog))
 
             f = self.__dict__['write_' + frmt]
             f.__doc__ = (
                 '''Refer to the docstring accompanying the'''
-                ''''write' method for more information.'''
-                )
+                ''''write' method for more information.''')
 
     def __getstate__(self):
         return copy.copy(self.obj_dict)
