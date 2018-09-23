@@ -1,14 +1,36 @@
+if: tag IS present OR type = pull_request OR (branch = master AND type = push)   # we only CI the master, tags and PRs
 language: python
-before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -y graphviz
+
+sudo: false
+
+addons:
+  apt:
+    packages:
+      - graphviz
+
+
 install:
-  - pip install tox
-script:
-    - tox
-env:
-  - TOXENV=py26
-  - TOXENV=py27
-  - TOXENV=py33
-  - TOXENV=py34
-  - TOXENV=pep8
+    pip install tox
+
+script: tox
+
+matrix:
+  include:
+    - env: TOXENV=py27
+      python: 2.7
+    - env: TOXENV=py34
+      python: 3.4
+    - env: TOXENV=py35
+      python: 3.5
+    - env: TOXENV=py36
+      python: 3.6
+    - env: TOXENV=py37
+      python: 3.7
+      dist: xenial
+      sudo: true
+    - env: TOXENV=py38
+      python: 3.8-dev
+      dist: xenial
+      sudo: true
+    # - env: TOXENV=py36-linters
+    #   python: 3.6
