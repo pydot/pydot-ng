@@ -8,9 +8,7 @@
 from __future__ import division
 from __future__ import print_function
 
-from hashlib import sha256
 import os
-import subprocess
 import sys
 
 import pydot_ng as pydot

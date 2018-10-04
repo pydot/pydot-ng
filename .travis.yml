@@ -32,5 +32,5 @@ matrix:
       python: 3.8-dev
       dist: xenial
       sudo: true
-    - env: TOXENV=py36-lint
+    - env: TOXENV=lint
       python: 3.6

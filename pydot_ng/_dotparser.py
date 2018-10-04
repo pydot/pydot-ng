@@ -134,7 +134,7 @@ def update_parent_graph_hierarchy(g, parent_graph=None, level=0):
                         obj['parent_graph'].set_parent_graph(parent_graph)
 
                 if key_name == 'edges' and len(key) == 2:
-                    for idx, vertex in enumerate(obj['points']):
+                    for vertex in obj['points']:
                         if isinstance(vertex, (pydot.Graph, pydot.Subgraph,
                                                pydot.Cluster)):
                             vertex.set_parent_graph(parent_graph)
@@ -162,7 +162,7 @@ def add_elements(g, toks, defaults_graph=None, defaults_node=None,
     if defaults_edge is None:
         defaults_edge = {}
 
-    for elm_idx, element in enumerate(toks):
+    for element in toks:
         if isinstance(element, (pydot.Subgraph, pydot.Cluster)):
             add_defaults(element, defaults_graph)
             g.add_subgraph(element)

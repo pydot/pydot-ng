@@ -1246,7 +1246,7 @@ class Graph(Common):
         """
         node_objs = list()
 
-        for node, obj_dict_list in self.obj_dict['nodes'].items():
+        for obj_dict_list in self.obj_dict['nodes'].values():
             node_objs.extend([
                 Node(obj_dict=obj_d)
                 for obj_d
@@ -1362,7 +1362,7 @@ class Graph(Common):
         """
         edge_objs = list()
 
-        for edge, obj_dict_list in self.obj_dict['edges'].items():
+        for obj_dict_list in self.obj_dict['edges'].values():
             edge_objs.extend([
                 Edge(obj_dict=obj_d)
                 for obj_d
@@ -1428,7 +1428,7 @@ class Graph(Common):
 
         sgraph_objs = list()
 
-        for sgraph, obj_dict_list in self.obj_dict['subgraphs'].items():
+        for obj_dict_list in self.obj_dict['subgraphs'].values():
             sgraph_objs.extend([
                 Subgraph(obj_dict=obj_d)
                 for obj_d
@@ -1508,7 +1508,7 @@ class Graph(Common):
             for obj
             in (edge_obj_dicts + node_obj_dicts + sgraph_obj_dicts)])
 
-        for idx, obj in obj_list:
+        for _idx, obj in obj_list:
             if obj['type'] == 'node':
                 node = Node(obj_dict=obj)
 
