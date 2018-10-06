@@ -5,8 +5,10 @@ from __future__ import print_function
 
 import os
 import sys
+import warnings
 from textwrap import dedent
 
+import mock
 import pytest
 
 import pydot_ng as pydot
@@ -260,3 +262,19 @@ def test_quoting():
 )
 def test_quote_if_necessary(input, expected):
     assert pydot.quote_if_necessary(input) == expected
+
+
+@pytest.mark.xfail(
+    (3, 7) > sys.version_info >= (3, 6),
+    reason="python 3.6 on Travis is failing this and no way to debug it now",
+)
+def test_dotparser_import_warning():
+    with mock.patch.dict(sys.modules, {"pydot_ng._dotparser": None}):
+        with pytest.warns(
+            UserWarning,
+            match="Couldn't import _dotparser, loading"
+            " of dot files will not be possible.",
+        ):
+            del sys.modules["pydot_ng"]
+            warnings.simplefilter("always")
+            import pydot_ng  # noqa: F401

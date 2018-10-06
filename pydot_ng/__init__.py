@@ -19,14 +19,16 @@ import re
 import subprocess
 import sys
 import tempfile
-
+import warnings
 from operator import itemgetter
 
 try:
     from pydot_ng import _dotparser as dot_parser
 except Exception:
-    print("Couldn't import _dotparser, "
-          "loading of dot files will not be possible.")
+    warnings.warn(
+        "Couldn't import _dotparser, "
+        "loading of dot files will not be possible."
+    )
 
 __author__ = 'Ero Carrera'
 __license__ = 'MIT'
