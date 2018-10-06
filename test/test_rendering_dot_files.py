@@ -12,13 +12,13 @@ import pydot_ng as pydot
 PY3 = not sys.version_info < (3, 0, 0)
 
 if PY3:
-    NULL_SEP = b''
+    NULL_SEP = b""
     xrange = range
 else:
-    NULL_SEP = ''
+    NULL_SEP = ""
     bytes = str
 
-DOT_BINARY_PATH = pydot.find_graphviz()['dot']
+DOT_BINARY_PATH = pydot.find_graphviz()["dot"]
 
 
 TEST_DIR = os.path.dirname(__file__)
@@ -57,10 +57,12 @@ def pytest_generate_tests(metafunc):
 
 def _render_with_graphviz(filename):
     p = subprocess.Popen(
-        (DOT_BINARY_PATH, '-Tjpe'),
+        (DOT_BINARY_PATH, "-Tjpe"),
         cwd=os.path.dirname(filename),
-        stdin=open(filename, 'rt'),
-        stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        stdin=open(filename, "rt"),
+        stderr=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+    )
 
     stdout = p.stdout
 
@@ -85,7 +87,7 @@ def _render_with_pydot(filename):
     g = pydot.graph_from_dot_file(filename)
     if not isinstance(g, list):
         g = [g]
-    jpe_data = NULL_SEP.join([_g.create(format='jpe') for _g in g])
+    jpe_data = NULL_SEP.join([_g.create(format="jpe") for _g in g])
     return sha256(jpe_data).hexdigest()
 
 
@@ -97,20 +99,21 @@ def test_render_and_compare_dot_files(filepath):
 
 
 def test_graph_with_shapefiles():
-    shapefile_dir = os.path.join(TEST_DIR, 'from-past-to-future')
-    dot_file = os.path.join(shapefile_dir, 'from-past-to-future.dot')
+    shapefile_dir = os.path.join(TEST_DIR, "from-past-to-future")
+    dot_file = os.path.join(shapefile_dir, "from-past-to-future.dot")
 
     pngs = [
         os.path.join(shapefile_dir, fname)
         for fname in os.listdir(shapefile_dir)
-        if fname.endswith('.png')]
+        if fname.endswith(".png")
+    ]
 
-    with open(dot_file, 'rt') as f:
+    with open(dot_file, "rt") as f:
         graph_data = f.read()
     #
     g = pydot.graph_from_dot_data(graph_data)
     g.set_shape_files(pngs)
-    jpe_data = g.create(format='jpe')
+    jpe_data = g.create(format="jpe")
     hexdigest = sha256(jpe_data).hexdigest()
     hexdigest_original = _render_with_graphviz(dot_file)
 
