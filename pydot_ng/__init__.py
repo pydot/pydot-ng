@@ -417,8 +417,14 @@ def __find_executables(path):
     """
 
     success = False
-    progs = {'dot': '', 'twopi': '', 'neato': '', 'circo': '', 'fdp': '',
-             'sfdp': ''}
+    progs = {
+        "dot": "",
+        "twopi": "",
+        "neato": "",
+        "circo": "",
+        "fdp": "",
+        "sfdp": "",
+    }
 
     was_quoted = False
     path = path.strip()
@@ -426,31 +432,32 @@ def __find_executables(path):
         path = path[1:-1]
         was_quoted = True
 
-    if os.path.isdir(path):
-        for prg in progs.keys():
-            if progs[prg]:
-                continue
+    if not os.path.isdir(path):
+        return None
 
-            if os.path.exists(os.path.join(path, prg)):
-                if was_quoted:
-                    progs[prg] = '"' + os.path.join(path, prg) + '"'
-                else:
-                    progs[prg] = os.path.join(path, prg)
+    for prg in progs:
+        if progs[prg]:
+            continue
 
-                success = True
+        prg_path = os.path.join(path, prg)
+        prg_exe_path = prg_path + ".exe"
 
-            elif os.path.exists(os.path.join(path, prg + '.exe')):
-                if was_quoted:
-                    progs[prg] = '"' + os.path.join(path, prg + '.exe') + '"'
-                else:
-                    progs[prg] = os.path.join(path, prg + '.exe')
+        if os.path.exists(prg_path):
+            if was_quoted:
+                prg_path = "\"{}\"".format(prg_path)
+            progs[prg] = prg_path
+            success = True
 
-                success = True
+        elif os.path.exists(prg_exe_path):
+            if was_quoted:
+                prg_exe_path = "\"{}\"".format(prg_exe_path)
+            progs[prg] = prg_exe_path
+            success = True
 
     if success:
         return progs
-    else:
-        return None
+
+    return None
 
 
 # The multi-platform version of this 'find_graphviz' function was
