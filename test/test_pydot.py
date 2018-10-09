@@ -39,6 +39,7 @@ def digraph():
 def test_keep_graph_type(graph_type):
     graph = pydot.Dot(graph_name="Test", graph_type=graph_type)
     assert graph.get_type() == graph_type
+    assert graph.graph_type == graph_type
 
 
 def test_node_style():

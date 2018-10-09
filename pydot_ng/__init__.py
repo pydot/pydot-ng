@@ -1125,6 +1125,8 @@ class Graph(Common):
         """Get the graph's type, 'graph' or 'digraph'."""
         return self.obj_dict['type']
 
+    graph_type = property(get_type, set_type)
+
     def set_name(self, graph_name):
         """Set the graph's name."""
         self.obj_dict['name'] = graph_name
