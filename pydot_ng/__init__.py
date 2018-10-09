@@ -14,6 +14,7 @@ from __future__ import division
 from __future__ import print_function
 
 import copy
+import functools
 import os
 import re
 import subprocess
@@ -306,27 +307,19 @@ def graph_from_edges(edge_list, node_prefix='', directed=False):
     If the graph is undirected by default, it is only
     calculated from one of the symmetric halves of the matrix.
     """
+    if edge_list is None:
+        edge_list = []
 
-    if directed:
-        graph = Dot(graph_type='digraph')
+    graph_type = "digraph" if directed else "graph"
+    with_prefix = functools.partial("{0}{1}".format, node_prefix)
 
-    else:
-        graph = Dot(graph_type='graph')
+    graph = Dot(graph_type=graph_type)
 
-    for edge in edge_list:
+    for src, dst in edge_list:
+        src = with_prefix(src)
+        dst = with_prefix(dst)
 
-        if isinstance(edge[0], str):
-            src = node_prefix + edge[0]
-        else:
-            src = node_prefix + str(edge[0])
-
-        if isinstance(edge[1], str):
-            dst = node_prefix + edge[1]
-        else:
-            dst = node_prefix + str(edge[1])
-
-        e = Edge(src, dst)
-        graph.add_edge(e)
+        graph.add_edge(Edge(src, dst))
 
     return graph
 
@@ -881,9 +874,13 @@ class Edge(Common):
         """Get the edges source node name."""
         return self.obj_dict['points'][0]
 
+    source = property(get_source)
+
     def get_destination(self):
         """Get the edge's destination node name."""
         return self.obj_dict['points'][1]
+
+    destination = property(get_destination)
 
     def __hash__(self):
         return hash(hash(self.get_source()) + hash(self.get_destination()))
