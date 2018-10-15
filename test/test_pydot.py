@@ -8,8 +8,8 @@ import sys
 import warnings
 from textwrap import dedent
 
-import mock
 import pytest
+import mock
 
 import pydot_ng as pydot
 
@@ -279,58 +279,3 @@ def test_dotparser_import_warning():
             del sys.modules["pydot_ng"]
             warnings.simplefilter("always")
             import pydot_ng  # noqa: F401
-
-
-def test_find_executables_fake_path():
-    assert pydot.__find_executables("/fake/path/") is None
-
-
-def test_find_executables_real_path_no_programs(tmpdir):
-    assert pydot.__find_executables(str(tmpdir)) is None
-
-
-def test_find_executables_path_needs_strip(tmpdir):
-    path = tmpdir.mkdir("subdir")
-    prog_path = str(path.join("dot"))
-
-    path_with_spaces = "    {}     ".format(path)
-
-    with open(prog_path, "w"):
-        progs = pydot.__find_executables(path_with_spaces)
-        assert progs["dot"] == prog_path
-        assert sorted(
-            ("dot", "twopi", "neato", "circo", "fdp", "sfdp")
-        ) == sorted(progs)
-
-
-def test_find_executables_unix_and_exe_exists(tmpdir):
-    path = str(tmpdir)
-    prog_unix_path = str(tmpdir.join("dot"))
-    prog_exe_path = str(tmpdir.join("dot.exe"))
-
-    with open(prog_unix_path, "w"):
-        with open(prog_exe_path, "w"):
-            progs = pydot.__find_executables(path)
-            assert progs["dot"] == prog_unix_path
-            assert progs["dot"] != prog_exe_path
-
-
-@pytest.mark.parametrize("quoted", (True, False), ids=("quoted", "unqoted"))
-@pytest.mark.parametrize("extension", ("", ".exe"))
-@pytest.mark.parametrize(
-    "program", ("dot", "twopi", "neato", "circo", "fdp", "sfdp")
-)
-def test_find_executables(tmpdir, program, extension, quoted):
-    path = tmpdir.mkdir("PYDOT is_da best!")
-    prog_path = str(path.join(program + extension))
-
-    with open(prog_path, "w"):
-        if quoted:
-            path = "\"{}\"".format(path)
-            prog_path = "\"{}\"".format(prog_path)
-
-        progs = pydot.__find_executables(str(path))
-        assert progs[program] == prog_path
-        assert sorted(
-            ("dot", "twopi", "neato", "circo", "fdp", "sfdp")
-        ) == sorted(progs)

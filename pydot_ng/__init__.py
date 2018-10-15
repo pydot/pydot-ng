@@ -398,6 +398,25 @@ def graph_from_incidence_matrix(matrix, node_prefix='', directed=False):
     return graph
 
 
+def is_quoted(path):
+    return path.startswith('"') and path.endswith('"')
+
+
+def is_windows():
+    return os.name == 'nt'
+
+
+def is_anacoda():
+    return os.path.exists(os.path.join(sys.prefix, 'conda-meta'))
+
+
+def get_executable_extension():
+    if is_windows():
+        return '.bat' if is_anacoda() else '.exe'
+    else:
+        return ''
+
+
 def __find_executables(path):
     """Used by find_graphviz
 
@@ -409,7 +428,8 @@ def __find_executables(path):
     Otherwise returns None
     """
 
-    success = False
+    any_found = False
+
     progs = {
         "dot": "",
         "twopi": "",
@@ -419,11 +439,12 @@ def __find_executables(path):
         "sfdp": "",
     }
 
-    was_quoted = False
     path = path.strip()
-    if path.startswith('"') and path.endswith('"'):
+    path_template = "{}"
+
+    if is_quoted(path):
         path = path[1:-1]
-        was_quoted = True
+        path_template = "\"{}\""
 
     if not os.path.isdir(path):
         return None
@@ -432,22 +453,14 @@ def __find_executables(path):
         if progs[prg]:
             continue
 
-        prg_path = os.path.join(path, prg)
-        prg_exe_path = prg_path + ".exe"
+        ext = get_executable_extension()
+        prg_path = os.path.join(path, prg + ext)
 
         if os.path.exists(prg_path):
-            if was_quoted:
-                prg_path = "\"{}\"".format(prg_path)
-            progs[prg] = prg_path
-            success = True
+            any_found = True
+            progs[prg] = path_template.format(prg_path)
 
-        elif os.path.exists(prg_exe_path):
-            if was_quoted:
-                prg_exe_path = "\"{}\"".format(prg_exe_path)
-            progs[prg] = prg_exe_path
-            success = True
-
-    if success:
+    if any_found:
         return progs
 
     return None
