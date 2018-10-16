@@ -1,5 +1,7 @@
 #!/usr/bin/env python
+import ast
 import os
+import re
 from codecs import open
 
 from setuptools import setup
@@ -10,13 +12,25 @@ os.environ['COPY_EXTENDED_ATTRIBUTES_DISABLE'] = 'true'
 os.environ['COPYFILE_DISABLE'] = 'true'
 
 
+CURRENT_DIR = os.path.dirname(__file__)
+
+
+def get_version():
+    init_file = os.path.join(CURRENT_DIR, 'pydot_ng', '__init__.py')
+    _version_re = re.compile(r'__version__\s+=\s+(?P<version>.*)')
+    with open(init_file, 'r', encoding='utf8') as f:
+        match = _version_re.search(f.read())
+        version = match.group('version') if match is not None else '"unknown"'
+    return str(ast.literal_eval(version))
+
+
 with open('README.rst', 'r', 'utf-8') as f:
     readme = f.read()
 
 
 setup(
     name='pydot_ng',
-    version='1.0.1.dev0',
+    version=get_version(),
     description='Python interface to Graphviz\'s Dot',
     author='Ero Carrera',
     author_email='ero@dkbza.org',
