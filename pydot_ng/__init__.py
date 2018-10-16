@@ -33,7 +33,7 @@ except Exception:
 
 __author__ = 'Ero Carrera'
 __license__ = 'MIT'
-__version__ = '1.0.1.dev0'
+__version__ = '2.0.0'
 
 PY3 = not sys.version_info < (3, 0, 0)
 
