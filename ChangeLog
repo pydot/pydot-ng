@@ -1,15 +1,22 @@
-1.0.1 (unreleased)
+2.0.0 (2018-10-16)
 ------------------
 
-- Nothing changed yet.
+* Linting issues resolved
+* Testing using py.test based tests
+* Reverted changes that introduced problems with parsing DOT format
+* Testing on Windows
+* Tested and refactored graph_from_edges
+* Tested and refactored find_executables
+* pydot_ng is now ready to have active development
+* Deployment through Travis
 
 
 1.0.0 (2015-02-26)
 ------------------
 
-- Added tox to run tests
-- Added Travis CI integration
-- Reset version numbering
+* Added tox to run tests
+* Added Travis CI integration
+* Reset version numbering
 
 
 Original pydot changelog
