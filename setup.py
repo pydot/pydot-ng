@@ -40,6 +40,7 @@ setup(
     license='MIT',
     keywords='graphviz dot graphs visualization',
     platforms=['any'],
+    zip_safe=False,
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Science/Research',
