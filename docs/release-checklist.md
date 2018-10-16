@@ -1,0 +1,22 @@
+# PyPI release checklist
+
+ - [ ] Install `zest.releaser` with recommended addons: `pip install zest.releaser[recommended]`.
+ - [ ] Check if long description of packege is looking OK (`longtest` command).
+ - [ ] Inspect changes from last release (`lasttaglog` command from `zest.releaser`) and update `ChaneLog` (`addchangelogentry` command is usefull) if needed.
+ - [ ] Run `fullrelease` command (it is commig from `zest.releaser`). Steps bellow should be handled by `zest.releaser`.
+   - [ ] Run `pyaroma` to check for following packaging best practicies.
+   - [ ] Run `check-manifest` to check if `MANIFEST.in` is correct.
+   - [ ] Enter version using semantic versioning.
+   - [ ] Make sure that version is bumped in correct place (`__version___`).
+   - [ ] Commit new version.
+   - [ ] Add a tag.
+   - [ ] Checkout tag and investigate if everything is OK.
+   - [ ] Do not upload package.
+   - [ ] Enter new development version using semantic versioning.
+   - [ ] Do not push to main repo.
+ - [ ] Look at the log and diff again to see if everything is looking as you intended.
+ - [ ] Push to main repo (`git push`).
+ - [ ] Wait for tests to pass on CI.
+ - [ ] Push tags (`git push --tags`).
+ - [ ] Check the PyPI listing page to make sure that it is looking OK (files, description, etc.).
+ - [ ] Check if new version can be installed `pip install pydot_ng`
