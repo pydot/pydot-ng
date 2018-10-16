@@ -1,14 +1,18 @@
 #!/usr/bin/env python
-from codecs import open
 import os
+from codecs import open
+
 from setuptools import setup
 
 
+# NOTE(prmtl): found reason on https://superuser.com/q/259703
 os.environ['COPY_EXTENDED_ATTRIBUTES_DISABLE'] = 'true'
 os.environ['COPYFILE_DISABLE'] = 'true'
 
+
 with open('README.rst', 'r', 'utf-8') as f:
     readme = f.read()
+
 
 setup(
     name='pydot_ng',
