@@ -1,1 +1,11 @@
-include *.txt *.ini *.rst LICENSE
+include *.txt
+include *.ini
+include *.rst
+include LICENSE
+include ChangeLog
+recursive-include test *.dot
+recursive-include test *.png
+recursive-include test *.dot_crashes_dot_abort_trap
+recursive-include test *.dot_crashes_dot_bus_error
+recursive-include test *.jpe_text
+recursive-include test *.ps
