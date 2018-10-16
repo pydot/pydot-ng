@@ -8,7 +8,6 @@ addons:
     packages:
       - graphviz
 
-
 install:
     pip install tox
 
@@ -34,3 +33,13 @@ matrix:
       sudo: true
     - env: TOXENV=lint
       python: 3.6
+
+deploy:
+  provider: pypi
+  user: prmtl
+  password:
+    secure: P1Nv54dQUOY+sXAWKkyfkHdhDvziCS3U/6As/NgfKEHCfY6fnZZJzylDuzbJ13foGaQniUa2+InuxoUFsH21YRBaif3PXUlTAJEiseWC3cr0E7DiicnDQB0fWqGS0MT2lQa29H34WVPrxnckt9Hy1whAJYAbBIixbHQrDB22G+U=
+  distributions: "sdist bdist_wheel" # Your distributions here
+  on:
+    python: 3.7
+    tags: true
