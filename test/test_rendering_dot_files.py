@@ -30,6 +30,8 @@ TESTS_DIRS = (
     ("my_regressions", MY_REGRESSION_TESTS_DIR),
 )
 
+DEFAULT_FORMAT = "png"
+
 
 def list_dots(path):
     searchpath = os.path.join(path, "*.dot")
@@ -57,7 +59,7 @@ def pytest_generate_tests(metafunc):
 
 def _render_with_graphviz(filename):
     p = subprocess.Popen(
-        (DOT_BINARY_PATH, "-Tjpe"),
+        (DOT_BINARY_PATH, "-T{}".format(DEFAULT_FORMAT)),
         cwd=os.path.dirname(filename),
         stdin=open(filename, "rt"),
         stderr=subprocess.PIPE,
@@ -77,8 +79,8 @@ def _render_with_graphviz(filename):
     if stdout_output:
         stdout_output = NULL_SEP.join(stdout_output)
 
-    # this returns a status code we should check
-    p.wait()
+    ret = p.wait()
+    assert ret == 0, "graphviz quit with error"
 
     return sha256(stdout_output).hexdigest()
 
@@ -87,8 +89,8 @@ def _render_with_pydot(filename):
     g = pydot.graph_from_dot_file(filename)
     if not isinstance(g, list):
         g = [g]
-    jpe_data = NULL_SEP.join([_g.create(format="jpe") for _g in g])
-    return sha256(jpe_data).hexdigest()
+    image_data = NULL_SEP.join([_g.create(format=DEFAULT_FORMAT) for _g in g])
+    return sha256(image_data).hexdigest()
 
 
 def test_render_and_compare_dot_files(filepath):
@@ -113,8 +115,8 @@ def test_graph_with_shapefiles():
     #
     g = pydot.graph_from_dot_data(graph_data)
     g.set_shape_files(pngs)
-    jpe_data = g.create(format="jpe")
-    hexdigest = sha256(jpe_data).hexdigest()
+    image_data = g.create(format=DEFAULT_FORMAT)
+    hexdigest = sha256(image_data).hexdigest()
     hexdigest_original = _render_with_graphviz(dot_file)
 
     assert hexdigest == hexdigest_original
