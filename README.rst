@@ -1,5 +1,9 @@
-pydot - Python interface to Graphviz's Dot language
+pydot-ng - Python interface to Graphviz's Dot language
+------------------------------------------------------
+
+Archived. Please use https://github.com/pydot/pydot
 ---------------------------------------------------
+
 Ero Carrera (c) 2004-2007
 
 ero@dkbza.org
